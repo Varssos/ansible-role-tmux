@@ -1,0 +1,9 @@
+---
+# tmux
+tmux_packages:
+  - tmux
+  - xclip
+tmux_meslo_fonts_dir: /usr/share/fonts/opentype/Meslo
+tmux_nerd_font_version: "v3.4.0"
+tmux_nerd_font_name: "Meslo"
+tmux_tpm_repo: "https://github.com/tmux-plugins/tpm.git"

@@ -1,0 +1,29 @@
+---
+galaxy_info:
+  author: Varssos
+  description: Install tmux, the Meslo Nerd Font, tmux plugin manager (tpm), and stow personal dotfiles config on Debian/Ubuntu systems
+  license: MIT
+  min_ansible_version: "2.9"
+
+  platforms:
+    - name: Ubuntu
+      versions:
+        - focal
+        - jammy
+        - noble
+    - name: Debian
+      versions:
+        - bullseye
+        - bookworm
+    - name: Linux Mint
+      versions:
+        - "21"
+        - "22"
+
+  galaxy_tags:
+    - tmux
+    - terminal
+    - cli
+    - multiplexer
+
+dependencies: []

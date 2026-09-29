@@ -1,0 +1,59 @@
+---
+- name: Install tmux and dependencies
+  apt:
+    name: "{{ tmux_packages }}"
+    state: present
+
+- name: Check if Meslo fonts already exist
+  find:
+    paths: "{{ tmux_meslo_fonts_dir }}"
+    patterns: "*.ttf"
+    recurse: no
+  register: meslo_fonts
+
+- name: Include nerd_fonts tasks only if not installed
+  include_tasks: nerd_fonts.yml
+  when: meslo_fonts.matched == 0
+
+
+
+- name: Create tmux plugins directory
+  file:
+    path: "{{ user_home_path }}/.tmux/plugins"
+    state: directory
+  become_user: "{{ ansible_user }}"
+
+- name: Install tmux plugin manager (tpm)
+  git:
+    repo: "{{ tmux_tpm_repo }}"
+    dest: "{{ user_home_path }}/.tmux/plugins/tpm"
+  become_user: "{{ ansible_user }}"
+  register: tpm_install
+
+- name: Create ~/.config/tmux directory
+  file:
+    path: "{{ user_home_path }}/.config/tmux"
+    state: directory
+  become_user: "{{ ansible_user }}"
+
+- name: Apply tmux stow (restow to pick up any changes)
+  command:
+    cmd: stow -R tmux
+    chdir: "{{ dotfiles_path }}"
+  become_user: "{{ ansible_user }}"
+  register: tmux_stow
+  changed_when: tmux_stow.stdout != '' or tmux_stow.stderr != ''
+
+# Don't know why sometimes it returns error code 1 even if everything is fine
+- name: Source tmux plugins
+  shell: "{{ user_home_path }}/.tmux/plugins/tpm/scripts/source_plugins.sh 2>/dev/null || true"
+  become_user: "{{ ansible_user }}"
+  ignore_errors: yes
+
+- name: Install tmux plugins
+  shell: "{{ user_home_path }}/.tmux/plugins/tpm/scripts/install_plugins.sh"
+  become_user: "{{ ansible_user }}"
+
+- name: Source tmux configuration
+  shell: 'tmux source "{{ user_home_path }}/.config/tmux/tmux.conf" 2>/dev/null || true'
+  become_user: "{{ ansible_user }}"

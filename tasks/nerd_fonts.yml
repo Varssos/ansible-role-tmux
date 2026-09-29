@@ -1,0 +1,33 @@
+---
+- name: Ensure font directory exists
+  file:
+    path: "{{ tmux_meslo_fonts_dir }}"
+    state: directory
+    mode: "0755"
+
+- name: Install fontconfig
+  apt:
+    name: fontconfig
+    state: present
+  become: yes
+
+- name: Download Meslo Nerd Font
+  get_url:
+    url: "https://github.com/ryanoasis/nerd-fonts/releases/download/{{ tmux_nerd_font_version }}/{{ tmux_nerd_font_name }}.zip"
+    dest: "/tmp/{{ tmux_nerd_font_name }}.zip"
+    mode: "0644"
+
+- name: Extract Meslo fonts
+  unarchive:
+    src: "/tmp/{{ tmux_nerd_font_name }}.zip"
+    dest: "{{ tmux_meslo_fonts_dir }}"
+    remote_src: yes
+
+- name: Remove temporary zip file
+  file:
+    path: "/tmp/{{ tmux_nerd_font_name }}.zip"
+    state: absent
+
+- name: Rebuild font cache
+  command: fc-cache -f
+  changed_when: true
