@@ -26,4 +26,5 @@ galaxy_info:
     - cli
     - multiplexer
 
-dependencies: []
+dependencies:
+  - role: dotfiles

@@ -5,9 +5,11 @@
     state: directory
     mode: "0755"
 
-- name: Install fontconfig
+- name: Install fontconfig and unzip
   apt:
-    name: fontconfig
+    name:
+      - fontconfig
+      - unzip
     state: present
   become: yes
 
